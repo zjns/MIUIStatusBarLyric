@@ -1,19 +1,18 @@
 package com.byyang.choose;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-
 import androidx.annotation.CallSuper;
 
 import java.io.File;
-import java.io.IOException;
 
 
 public class ChooseFileUtils {
+    @SuppressLint("StaticFieldLeak")
     private static final Context mContext = ContextUtils.getContext();
     private final ActivityResultLauncher activityResultLauncher;
     //private Intent mIntent;
@@ -22,10 +21,6 @@ public class ChooseFileUtils {
 
     public ChooseFileUtils(Activity activity) {
         this(new ActivityResultLauncher(activity));
-    }
-
-    public ChooseFileUtils(Fragment fragment) {
-        this(new ActivityResultLauncher(fragment));
     }
 
     private ChooseFileUtils(ActivityResultLauncher activityResultLauncher) {
@@ -43,37 +38,30 @@ public class ChooseFileUtils {
             return;
         }
         Intent intent = result.getData();
-        if (intent == null) {
-            chooseListener.onFailed(new IOException("回调数据出现异常！\n回调返回码：" + resultCode));
+        String filePath = getDocumentPath(intent.getData());
+        if (filePath != null) {
+            chooseListener.onSuccess(filePath, intent.getData(), intent);
         } else {
-            String filePath = getDocumentPath(intent.getData());
-            if (filePath != null) {
-                chooseListener.onSuccess(filePath, intent.getData(), intent);
-            } else {
-                chooseListener.onFailed(new IOException("解密文件路径出错了！"));
-            }
+            chooseListener.onFailed();
         }
 
     }
 
     /**
-     * @param uri
+     *
      * @return 路径解密，自己实现
      */
-    private static String getDocumentPath(Uri uri) {
+    public static String getDocumentPath(Uri uri) {
         try {
             String filePath;
             String[] pathList = uri.getPath().split(":");
             if (pathList[pathList.length - 1].equals("/document/primary")) {
                 filePath = Environment.getExternalStorageDirectory() + "/";
-                if (fileIsExists(filePath)) {
-                    return filePath;
-                }
             } else {
                 filePath = Environment.getExternalStorageDirectory() + "/" + pathList[pathList.length - 1] + "/";
-                if (fileIsExists(filePath)) {
-                    return filePath;
-                }
+            }
+            if (fileIsExists(filePath)) {
+                return filePath;
             }
         } catch (Exception e) {
             return null;
@@ -81,10 +69,6 @@ public class ChooseFileUtils {
         return null;
 
     }
-
-    /*public void unregister() {
-        activityResult.unregister();
-    }*/
 
     private static boolean fileIsExists(String filePath) {
         File file = new File(filePath);
@@ -114,7 +98,7 @@ public class ChooseFileUtils {
         }
 
         @CallSuper
-        public void onFailed(Exception e) {
+        public void onFailed() {
 
         }
 

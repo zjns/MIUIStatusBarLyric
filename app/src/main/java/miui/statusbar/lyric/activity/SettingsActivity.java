@@ -35,6 +35,7 @@ import miui.statusbar.lyric.utils.ActivityUtils;
 import miui.statusbar.lyric.utils.ShellUtils;
 import miui.statusbar.lyric.utils.Utils;
 
+import java.io.File;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Objects;
@@ -76,7 +77,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     @SuppressWarnings("deprecation")
     public void init() {
-        ActivityUtils.checkPermissions(activity, config);
+       ActivityUtils.checkPermissions(activity, config);
         String tips = "Tips1";
         SharedPreferences preferences = activity.getSharedPreferences(tips, 0);
         if (!preferences.getBoolean(tips, false)) {

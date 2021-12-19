@@ -2,7 +2,6 @@ package com.byyang.choose;
 
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 
@@ -19,10 +18,6 @@ public class ActivityResultLauncher {
 
     public ActivityResultLauncher(Activity activity) {
         this.activity = activity;
-    }
-
-    public ActivityResultLauncher(Fragment fragment) {
-        this(fragment.getActivity());
     }
 
     private static ActivityResultFragment getActivityResultFragment(Activity activity) {
